@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.119.1](https://www.github.com/googleapis/java-redis/compare/v0.119.0...v0.119.1) (2020-02-14)
+
+
+### Documentation
+
+* **regen:** update generated samples for UpdateInstance ([#65](https://www.github.com/googleapis/java-redis/issues/65)) ([c21e230](https://www.github.com/googleapis/java-redis/commit/c21e2301698c6d4fb2de1dce9d60c477031ee7f4))
+* **regen:** update sample code to set total timeout, add API client header test ([e0790c9](https://www.github.com/googleapis/java-redis/commit/e0790c90b5b3e7d819cfc6c5305b957b6460ad14))
+
+
+### Dependencies
+
+* update core dependency ([#62](https://www.github.com/googleapis/java-redis/issues/62)) ([15742cc](https://www.github.com/googleapis/java-redis/commit/15742cc4b4221180ed1f55f63738547c25ca2cea))
+* update dependency com.google.cloud:google-cloud-core to v1.92.5 ([eeef8c1](https://www.github.com/googleapis/java-redis/commit/eeef8c17dccc634142ea35f363d6f22b524f231d))
+
 ## [0.119.0](https://www.github.com/googleapis/java-redis/compare/v0.118.1...v0.119.0) (2020-02-05)
 
 
