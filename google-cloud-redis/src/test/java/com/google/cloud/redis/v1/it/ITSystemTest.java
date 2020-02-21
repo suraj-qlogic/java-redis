@@ -24,8 +24,11 @@ import com.google.cloud.redis.v1.Instance;
 import com.google.cloud.redis.v1.InstanceName;
 import com.google.cloud.redis.v1.LocationName;
 import com.google.common.collect.Lists;
+import com.google.protobuf.FieldMask;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,7 +45,7 @@ public class ITSystemTest {
   private static final String INSTANCE =
       INSTANCE_NAME_PREFIX + "-" + UUID.randomUUID().toString().substring(0, 8);
   private static final String LOCATION = "us-central1";
-  private static final int MEMORY_SIZE_GB = 1;
+  private static final int MEMORY_SIZE_GB = 4;
   private static final String AUTHORIZED_NETWORK = System.getProperty("redis.network", "default");
 
   @BeforeClass
@@ -56,7 +59,7 @@ public class ITSystemTest {
     Instance instance =
         Instance.newBuilder()
             .setTier(TIER)
-            .setMemorySizeGb(MEMORY_SIZE_GB)
+            .setMemorySizeGb(1)
             .setAuthorizedNetwork(authorizedNetwork)
             .build();
     client.createInstanceAsync(parent, INSTANCE, instance).get();
@@ -78,7 +81,7 @@ public class ITSystemTest {
     InstanceName name = InstanceName.of(projectId, LOCATION, INSTANCE);
     Instance response = client.getInstance(name);
     assertEquals(TIER, response.getTier());
-    assertEquals(MEMORY_SIZE_GB, response.getMemorySizeGb());
+    assertEquals(name.toString(), response.getName());
   }
 
   @Test
@@ -92,5 +95,17 @@ public class ITSystemTest {
       instance++;
     }
     assertEquals(count, resources.size());
+  }
+
+  /** Update a Redis instance. */
+  @Test
+  public void testUpdateInstance() throws ExecutionException, InterruptedException {
+    InstanceName name = InstanceName.of(projectId, LOCATION, INSTANCE);
+    FieldMask updateMask =
+        FieldMask.newBuilder().addAllPaths(Arrays.asList("memory_size_gb")).build();
+    Instance instance =
+        Instance.newBuilder().setName(name.toString()).setMemorySizeGb(MEMORY_SIZE_GB).build();
+    Instance actualInstance = client.updateInstanceAsync(updateMask, instance).get();
+    assertEquals(MEMORY_SIZE_GB, actualInstance.getMemorySizeGb());
   }
 }
