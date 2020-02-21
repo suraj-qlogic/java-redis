@@ -24,8 +24,11 @@ import com.google.cloud.redis.v1.Instance;
 import com.google.cloud.redis.v1.InstanceName;
 import com.google.cloud.redis.v1.LocationName;
 import com.google.common.collect.Lists;
+import com.google.protobuf.FieldMask;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -92,5 +95,18 @@ public class ITSystemTest {
       instance++;
     }
     assertEquals(count, resources.size());
+  }
+
+  /** Update a Redis instance. */
+  @Test
+  public void testUpdateInstance() throws ExecutionException, InterruptedException {
+    int memorySizeGb = 4;
+    InstanceName name = InstanceName.of(projectId, LOCATION, INSTANCE);
+    FieldMask updateMask =
+        FieldMask.newBuilder().addAllPaths(Arrays.asList("memory_size_gb")).build();
+    Instance instance =
+        Instance.newBuilder().setName(name.toString()).setMemorySizeGb(memorySizeGb).build();
+    Instance actualInstance = client.updateInstanceAsync(updateMask, instance).get();
+    assertEquals(memorySizeGb, actualInstance.getMemorySizeGb());
   }
 }
